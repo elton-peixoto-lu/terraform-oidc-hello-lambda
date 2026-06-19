@@ -185,10 +185,8 @@ data "aws_iam_policy_document" "github_plan" {
       "iam:ListRolePolicies",
       "iam:ListAttachedRolePolicies",
       "iam:GetRolePolicy",
-      "lambda:GetFunction",
-      "lambda:GetFunctionConfiguration",
-      "lambda:ListTags",
-      "lambda:ListVersionsByFunction",
+      "lambda:Get*",
+      "lambda:List*",
       "logs:DescribeLogGroups",
       "logs:ListTagsForResource"
     ]
