@@ -188,6 +188,7 @@ data "aws_iam_policy_document" "github_plan" {
       "lambda:GetFunction",
       "lambda:GetFunctionConfiguration",
       "lambda:ListTags",
+      "lambda:ListVersionsByFunction",
       "logs:DescribeLogGroups",
       "logs:ListTagsForResource"
     ]
