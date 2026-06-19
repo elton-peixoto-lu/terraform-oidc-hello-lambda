@@ -57,7 +57,7 @@ jobs:
 
       - name: Terraform init local fallback
         if: ${{ vars.AWS_ROLE_PLAN_ARN == '' || vars.AWS_REGION == '' || vars.TF_STATE_BUCKET == '' || vars.TF_LOCK_TABLE == '' || vars.TF_STATE_KMS_KEY_ID == '' }}
-        working-directory: infra/envs/prod
+        working-directory: infra/envs/ci
         run: terraform init -backend=false
 
       - name: Configure AWS credentials via OIDC
@@ -87,10 +87,18 @@ jobs:
         working-directory: infra/envs/prod
         run: terraform validate
 
+      - name: Terraform validate local fallback root
+        if: ${{ vars.AWS_ROLE_PLAN_ARN == '' || vars.AWS_REGION == '' || vars.TF_STATE_BUCKET == '' || vars.TF_LOCK_TABLE == '' || vars.TF_STATE_KMS_KEY_ID == '' }}
+        working-directory: infra/envs/ci
+        run: terraform validate
+
       - name: Terraform plan local fallback
         if: ${{ vars.AWS_ROLE_PLAN_ARN == '' || vars.AWS_REGION == '' || vars.TF_STATE_BUCKET == '' || vars.TF_LOCK_TABLE == '' || vars.TF_STATE_KMS_KEY_ID == '' }}
-        working-directory: infra/envs/prod
-        run: terraform plan -input=false -refresh=false -no-color
+        working-directory: infra/envs/ci
+        env:
+          AWS_ACCESS_KEY_ID: dummy
+          AWS_SECRET_ACCESS_KEY: dummy
+        run: terraform plan -input=false -refresh=false -no-color -var="skip_aws_credentials_validation=true"
 
       - name: Terraform plan
         if: ${{ vars.AWS_ROLE_PLAN_ARN != '' && vars.AWS_REGION != '' && vars.TF_STATE_BUCKET != '' && vars.TF_LOCK_TABLE != '' && vars.TF_STATE_KMS_KEY_ID != '' }}

@@ -1,8 +1,6 @@
 terraform {
   required_version = ">= 1.5.0"
 
-  backend "s3" {}
-
   required_providers {
     aws = {
       source  = "hashicorp/aws"
@@ -22,3 +20,4 @@ provider "aws" {
   skip_requesting_account_id  = var.skip_aws_credentials_validation
   skip_region_validation      = var.skip_aws_credentials_validation
 }
+

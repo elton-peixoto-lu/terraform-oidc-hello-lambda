@@ -38,6 +38,8 @@ Enquanto as variáveis do repositório ainda não estiverem configuradas, o CI e
 
 O workflow de `apply` tambem fica protegido: se as variables de backend e role ainda nao existirem, o job nao tenta implantar nada. Assim o repositório pode nascer primeiro e a fundação AWS pode ser conectada em seguida sem quebrar a branch principal.
 
+No modo de fallback local, o provider AWS roda com validações de credencial e de metadata desabilitadas apenas para o CI sintático do branch. No fluxo normal de OIDC, essas flags continuam desligadas e a autenticação real acontece pela role assumida no GitHub Actions.
+
 ## Pré-requisitos
 
 - AWS CLI autenticado

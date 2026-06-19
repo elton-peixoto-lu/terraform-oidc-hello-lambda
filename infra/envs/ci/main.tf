@@ -10,3 +10,4 @@ output "lambda_name" {
 output "lambda_arn" {
   value = module.hello_lambda.lambda_arn
 }
+

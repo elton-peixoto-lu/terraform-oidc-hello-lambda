@@ -15,3 +15,4 @@ variable "skip_aws_credentials_validation" {
   type        = bool
   default     = false
 }
+
