@@ -1,0 +1,10 @@
+{
+  "name": "terraform-oidc-hello-lambda",
+  "version": "1.0.0",
+  "private": true,
+  "type": "commonjs",
+  "scripts": {
+    "test": "node --test tests/*.test.js"
+  }
+}
+

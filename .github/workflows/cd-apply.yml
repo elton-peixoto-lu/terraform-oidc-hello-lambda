@@ -1,0 +1,55 @@
+name: cd-apply
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  apply:
+    name: apply
+    runs-on: ubuntu-latest
+    environment: prod
+    if: ${{ vars.AWS_ROLE_APPLY_ARN != '' && vars.AWS_REGION != '' && vars.TF_STATE_BUCKET != '' && vars.TF_LOCK_TABLE != '' && vars.TF_STATE_KMS_KEY_ID != '' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Run tests
+        run: npm test
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.5.7
+
+      - name: Configure AWS credentials via OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_APPLY_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Terraform init
+        working-directory: infra/envs/prod
+        run: |
+          terraform init \
+            -backend-config="bucket=${{ vars.TF_STATE_BUCKET }}" \
+            -backend-config="key=prod/terraform.tfstate" \
+            -backend-config="region=${{ vars.AWS_REGION }}" \
+            -backend-config="dynamodb_table=${{ vars.TF_LOCK_TABLE }}" \
+            -backend-config="kms_key_id=${{ vars.TF_STATE_KMS_KEY_ID }}" \
+            -backend-config="encrypt=true"
+
+      - name: Terraform apply
+        working-directory: infra/envs/prod
+        run: terraform apply -auto-approve -input=false
